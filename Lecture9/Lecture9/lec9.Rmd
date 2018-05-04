@@ -29,10 +29,6 @@ row.names(wisc.data) <- wisc.df$id
 ```
 
 ```{r}
-plot(1:10)
-```
-
-```{r}
 # Create diagnosis vector by completing the missing code
 diagnosis <- as.numeric(wisc.df$diagnosis=='M')
 #If directly use wisc.df$diagnosis it will change the B and M into 2 and 1. We can first assign these to True and false.
