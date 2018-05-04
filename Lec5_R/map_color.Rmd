@@ -1,0 +1,39 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+#This is H1
+##This is H2
+###This is H3
+## Let's look at the poor old function
+This is the function code from Barry's student
+
+```{r}
+map.colors <- function (value,high.low,palette) {
+  proportion <- ((value-high.low[1])/(high.low[2]-high.low[1]))
+  index <- round ((length(palette)-1)*proportion)+1
+  return (palette[index])
+}
+
+```
+
+
+
+Now let;s try to understand this funtion
+```{r}
+map.colors2 <- function (x,high.low=range(x),palette=cm.colors(100)) {
+ 
+  #Determine where in the 'high.low' range our values of 'x' lie.
+   percent <- ((x-high.low[1])/(high.low[2]-high.low[1]))
+   
+  #Where in the 'palette' vector of colors is this 'percent' 
+   index <- round ((length(palette)-1)*percent)+1
+  
+   return (palette[index])
+}
+```
+

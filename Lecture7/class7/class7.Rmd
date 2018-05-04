@@ -1,0 +1,233 @@
+---
+title: "bioinformaticsClass7"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Functions again
+
+We can source any file of R code with the 'source'() function
+
+```{r}
+source("http://tinyurl.com/rescale-R")
+```
+
+let's make sure things are here
+
+```{r}
+ls()
+```
+
+Check our rescale function is working
+
+```{r}
+rescale(1:10)
+```
+And the first error would be where you have things other than numeric values. 
+```{r,eval=FALSE}
+rescale(c(1:10,"string"))
+```
+
+We can add a if loop for a warning message
+This function is stored in rescale2
+Lets see if rescale2 is better
+
+```{r,eval=FALSE}
+rescale2(c(1:10,"string"))
+```
+
+How to compile when error message is here?
+
+1) Comment the error chunks
+2) Add ",eval=FALSE"" after the beginning r code chunk after r in the parenthesis
+
+##Function for finding missing values in 2 datasets
+Write a "both_na()" function to do this
+```{r}
+x <- c( 1, 2, NA, 3, NA)
+y <- c(NA, 3, NA, 3, 4)
+ 
+is.na(x)
+
+```
+
+```{r}
+
+which (is.na(x))
+```
+You can flip your logical choice by "!"
+
+```{r}
+which (!is.na(x))
+#your "!" flipped your results
+```
+
+
+```{r}
+z<-10
+if(z>5) {
+  print("more")
+} else {
+  print("less")
+}
+```
+
+```{r}
+sum(is.na(x))
+# This only tells you how many missing values are here
+```
+
+```{r}
+is.na(x)
+is.na(y)
+```
+Now we want to know when both are TRUE, and how many times that happen
+
+```{r}
+is.na(x) & is.na(y)
+sum(is.na(x) & is.na(y))
+
+```
+Write it into a function
+```{r}
+both_na <- function(x,y) {
+  sum(is.na(x) & is.na(y))
+} 
+
+```
+
+test it
+```{r}
+both_na(x,y)
+```
+
+But you will get error when your input length doesn't match
+```{r,eval=FALSE}
+x <- c(NA, NA, NA)
+y1 <- c( 1, NA, NA)
+y2 <- c( 1, NA, NA, NA)
+
+both_na(x,y1)
+both_na(x,y2)
+```
+
+```{r,eval=FALSE}
+both_na2(x,y2)
+
+```
+
+```{r}
+x <- c( 1, 2, NA, 3, NA)
+y <- c(NA, 3, NA, 3, 4)
+ans <- both_na3(x,y)
+```
+
+```{r}
+ans$which
+```
+
+##And a last example function
+
+```{r}
+x<- df1$IDs
+y<- df2$IDs
+
+x
+y
+# Using intersect we can find intersect components
+intersect(x,y)
+
+# Using value matching function returns positions of matching of x in y
+match(x,y)
+
+#Check if everything in x is in y
+x %in% y
+```
+We can use the logical output of %in%
+Combine the values with cbind.
+
+```{r}
+x[x %in% y]
+y[y %in% x]
+
+
+cbind(x[x %in% y],y[y %in% x])
+```
+
+
+```{r}
+cbind(c("hello", "help"), c("please", "me"))
+```
+Notice that rbind binds them as rows
+```{r}
+rbind(c("hello", "help"), c("please", "me"))
+
+```
+
+
+Lets make them into a function
+
+```{r}
+
+intersectgenes <- function(x,y) {
+  cbind(x[x %in% y], y[y %in% x])
+}
+
+intersectgenes(x,y)
+```
+
+Our x and y are in a data frame
+```{r}
+#This is my code
+intersectgenes2 <- function(df1,df2) {
+  cbind(df1[ df1$IDs %in% df2$IDs, ], df2[df2$IDs %in% df1$IDs, "exp"])
+}
+
+intersectgenes2(df1,df2)
+```
+
+```{r}
+#This is professor's code
+gene_intersect2 <- function(df1, df2) {
+ cbind( df1[ df1$IDs %in% df2$IDs, ],
+ df2[ df2$IDs %in% df1$IDs, "exp"] )
+}
+```
+
+But now the column name looks complex
+
+```{r}
+intersectgenes3 <- function(df1,df2) {
+  gene.colname="IDs"
+  cbind( df1[ df1[,gene.colname] %in% df2[,gene.colname], ],
+ exp2=df2[ df2[,gene.colname] %in% df1[,gene.colname], "exp"] )
+}
+
+intersectgenes3(df1,df2)
+```
+Change a bit about the words
+
+```{r}
+intersectgenes4 <- function(df1, df2, gene.colname="IDs") {
+ df1.name <- df1[,gene.colname]
+ df2.name <- df2[,gene.colname]
+ df1.inds <- df1.name %in% df2.name
+ df2.inds <- df2.name %in% df1.name
+ cbind( df1[ df1.inds, ],
+ exp2=df2[ df2.inds, "exp"] )
+}
+
+intersectgenes4(df1,df2)
+```
+
+If we want to use every column
+Lets use merge function for this
+
+```{r}
+merge(df1,df2,by="IDs")
+
+```
+

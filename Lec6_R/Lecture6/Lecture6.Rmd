@@ -1,0 +1,172 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+My first function
+```{r}
+add <- function(x, y=1) {
+ # Sum the input x and y
+ x + y
+}
+```
+
+
+Let's test our first function
+```{r}
+add(x=6,y=4)
+```
+
+```{r}
+add(c(1:5),20)
+
+```
+
+
+My second function
+```{r}
+## You need a “name”, “arguments” and “body”…
+rescale <- function(x) {
+ rng <-range(x)
+ (x - rng[1]) / (rng[2] - rng[1])
+}
+# Test on a small example where you know the answer
+
+```
+Test my second function
+
+```{r}
+rescale(1:10)
+#rescale( c(1,2,NA,3,10) )
+#rescale( c(1,10,”string”) )
+
+```
+
+```{r}
+#we had errors in the range of the second one, range of x is NA whenever the array has NA. 
+rescale2 <- function(x) {
+ rng <-range(x,na.rm=TRUE)
+ (x - rng[1]) / (rng[2] - rng[1])
+}
+```
+More changes 
+```{r}
+rescale3 <- function(x, na.rm=TRUE, plot=FALSE) {
+ if(na.rm) {
+ rng <-range(x, na.rm=TRUE)
+ } else {
+ rng <-range(x)
+ }
+ print("Hello")
+ answer <- (x - rng[1]) / (rng[2] - rng[1])
+ return(answer)
+ print("is it me you are looking for?")
+ if(plot) {
+ plot(answer, typ="b", lwd=4)
+ }
+ print("I can see it in ...")
+}
+rescale2( c(1,2,NA,3,10) )
+rescale3( c(1,2,NA,3,10) )
+
+```
+```{r}
+rescale2.5 <- function(x, na.rm=TRUE, plot=FALSE) {
+ if(na.rm) {
+ rng <-range(x, na.rm=na.rm)
+ } else {
+ rng <-range(x)
+ }
+ print("Hello")
+ answer <- (x - rng[1]) / (rng[2] - rng[1])
+ print("is it me you are looking for?")
+ if(plot) {
+ plot(answer, typ="b", lwd=4)
+ }
+ print("I can see it in ...")
+}
+```
+
+```{r}
+rescale3 <- function(x, na.rm=TRUE, plot=TRUE) {
+ if(na.rm) {
+ rng <-range(x, na.rm=TRUE)
+ } else {
+ rng <-range(x)
+ }
+ print("Hello")
+ answer <- (x - rng[1]) / (rng[2] - rng[1])
+ return(answer)
+ print("is it me you are looking for?")
+ if(plot) {
+ plot(answer, typ="b", lwd=4)
+ }
+ print("I can see it in ...")
+}
+```
+
+
+
+#Section 2 class 6
+```{r}
+#Use package
+library(bio3d)
+#Improve the code
+s1 <- read.pdb("4AKE") # kinase with drug
+s2 <- read.pdb("1AKE") # kinase no drug
+s3 <- read.pdb("1E4Y") # kinase with drug
+#elety CA =alpha carbon
+s1.chainA <- trim.pdb(s1, chain="A", elety="CA")
+s2.chainA <- trim.pdb(s2, chain="A", elety="CA")
+s3.chainA <- trim.pdb(s1, chain="A", elety="CA")
+s1.b <- s1.chainA$atom$b
+s2.b <- s2.chainA$atom$b
+s3.b <- s3.chainA$atom$b
+plotb3(s1.b, sse=s1.chainA, typ="l", ylab="Bfactor")
+plotb3(s2.b, sse=s2.chainA, typ="l", ylab="Bfactor")
+plotb3(s3.b, sse=s3.chainA, typ="l", ylab="Bfactor")
+```
+```{r}
+plotb3(s1.b, sse=s1.chainA, typ="l", ylab="Bfactor", col="red")
+plotb3(s2.b, sse=s2.chainA, typ="l", ylab="Bfactor",col="blue")
+plotb3(s3.b, sse=s3.chainA, typ="l", ylab="Bfactor", col="green")
+```
+
+
+```{r}
+hc <- hclust( dist( rbind(s1.b, s2.b, s3.b) ) )
+plot(hc)
+```
+
+```{r}
+#Use package
+library(bio3d)
+#Improve the code
+#start with reading a PDB file
+pdb <- function(x) {
+  x <- read.pdb("4AKE")
+}
+#specify a chain to select by trim.pdb
+x.chain <- function(){
+  x.chain <- trim.pdb(x,chain="",elety="")
+  
+}
+#  
+x.b <- x.chain$atom$b
+  plotb3(x.b, sse=s.chain, type="l",ylab="Bfactor")
+s1 <- read.pdb("4AKE") # kinase with drug
+
+#elety CA =alpha carbon
+s1.chainA <- trim.pdb(s1, chain="A", elety="CA")
+
+s1.b <- s1.chainA$atom$b
+
+plotb3(s1.b, sse=s1.chainA, typ="l", ylab="Bfactor")
+
+```
+
+

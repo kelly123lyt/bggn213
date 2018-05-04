@@ -1,0 +1,42 @@
+---
+title: "generalpdbcode"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+#Use bio3d package
+library(bio3d)
+#Funtion to plot a PDB file given the PDB code x
+pdbplot <- function(x){
+  #step1:read the PDB file
+  s <- read.pdb(x) 
+  #select the chain and carbon that you want
+  sc <- trim.pdb(s, chain="A", elety="CA")
+  #plot the selected data
+  plotb3(sc$atom$b, sse=sc, typ="l", ylab="Bfactor")
+  #Return the value so it will be individually plotted and   saved every single turn
+  return(sc$atom$b)
+}
+```
+
+Test the function
+
+```{r}
+pdbplot("4AKE")
+```
+
+
+Combine other pdbs to compare
+```{r}
+l1 <- pdbplot("4AKE")
+l2 <- pdbplot("1AKE")
+l3 <- pdbplot("1E4Y")
+plot(l1, typ="l", col="red")
+points(l2, typ="l", col="blue")
+points(l3, typ="l", col="green")
+```
+

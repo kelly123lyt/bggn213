@@ -1,0 +1,270 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={Class5.R},
+            pdfauthor={kelly},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+  \title{Class5.R}
+  \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+  \author{kelly}
+  \preauthor{\centering\large\emph}
+  \postauthor{\par}
+  \predate{\centering\large\emph}
+  \postdate{\par}
+  \date{Wed Apr 18 15:55:22 2018}
+
+
+\begin{document}
+\maketitle
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Bioinformatics Class 5}
+\CommentTok{#Plots}
+
+\NormalTok{x <-}\StringTok{ }\KeywordTok{rnorm}\NormalTok{(}\DecValTok{1000}\NormalTok{,}\DecValTok{0}\NormalTok{)}
+
+\KeywordTok{summary}\NormalTok{(x)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+## -3.45549 -0.72330 -0.04287 -0.03330  0.58236  3.16554
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#see this data as a graph}
+\KeywordTok{boxplot}\NormalTok{(x)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Class5_files/figure-latex/unnamed-chunk-1-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Good old histogram}
+\KeywordTok{hist}\NormalTok{(x)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Class5_files/figure-latex/unnamed-chunk-1-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Section 1 from lab sheet}
+
+\NormalTok{baby <-}\StringTok{ }\KeywordTok{read.table}\NormalTok{(}\StringTok{"bggn213_05_rstats/weight_chart.txt"}\NormalTok{, }\DataTypeTok{header =} \OtherTok{TRUE}\NormalTok{)}
+
+\KeywordTok{plot}\NormalTok{(baby,}\DataTypeTok{type=}\StringTok{"b"}\NormalTok{,}\DataTypeTok{pch=}\DecValTok{15}\NormalTok{, }\DataTypeTok{cex=}\FloatTok{1.5}\NormalTok{,}\DataTypeTok{lwd=}\DecValTok{2}\NormalTok{,}\DataTypeTok{ylim=}\KeywordTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{10}\NormalTok{),}\DataTypeTok{xlab=}\StringTok{"Age (months)"}\NormalTok{,}\DataTypeTok{ylab=}\StringTok{"Weight(kg)"}\NormalTok{,}\DataTypeTok{main=}\StringTok{"Some title"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Class5_files/figure-latex/unnamed-chunk-1-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{feat <-}\StringTok{ }\KeywordTok{read.table}\NormalTok{(}\StringTok{"bggn213_05_rstats/feature_counts.txt"}\NormalTok{, }\DataTypeTok{sep=}\StringTok{"}\CharTok{\textbackslash{}t}\StringTok{"}\NormalTok{, }\DataTypeTok{header =} \OtherTok{TRUE}\NormalTok{)}
+
+\KeywordTok{par}\NormalTok{(}\DataTypeTok{mar=}\KeywordTok{c}\NormalTok{(}\DecValTok{5}\NormalTok{,}\DecValTok{11}\NormalTok{,}\DecValTok{4}\NormalTok{,}\DecValTok{2}\NormalTok{))}
+\KeywordTok{barplot}\NormalTok{(feat[,}\DecValTok{2}\NormalTok{],}\DataTypeTok{horiz =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{ylab=}\StringTok{"Atitle"}\NormalTok{, }\DataTypeTok{names.arg =}\NormalTok{ feat[,}\DecValTok{1}\NormalTok{], }\DataTypeTok{main=}\StringTok{"Some title"}\NormalTok{, }\DataTypeTok{las=}\DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Class5_files/figure-latex/unnamed-chunk-1-4.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{hist}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\KeywordTok{rnorm}\NormalTok{(}\DecValTok{10000}\NormalTok{),}\KeywordTok{rnorm}\NormalTok{(}\DecValTok{10000}\NormalTok{)}\OperatorTok{+}\DecValTok{4}\NormalTok{),}\DataTypeTok{breaks=}\DecValTok{50}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Class5_files/figure-latex/unnamed-chunk-1-5.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Section 2 from lab sheet}
+\CommentTok{#male <- read.table("bggn213_05_rstats/male_female_counts.txt", sep="\textbackslash{}t", header = TRUE)}
+\NormalTok{male <-}\StringTok{ }\KeywordTok{read.delim}\NormalTok{(}\StringTok{"bggn213_05_rstats/male_female_counts.txt"}\NormalTok{)}
+
+\KeywordTok{barplot}\NormalTok{(male[,}\DecValTok{2}\NormalTok{],}\DataTypeTok{horiz =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{ylab=}\StringTok{"Atitle"}\NormalTok{, }\DataTypeTok{names.arg =}\NormalTok{ male[,}\DecValTok{1}\NormalTok{], }\DataTypeTok{main=}\StringTok{"Some title"}\NormalTok{, }\DataTypeTok{las=}\DecValTok{1}\NormalTok{,}\DataTypeTok{col=}\KeywordTok{rainbow}\NormalTok{(}\DecValTok{10}\NormalTok{) )}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Class5_files/figure-latex/unnamed-chunk-1-6.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{barplot}\NormalTok{(male[,}\DecValTok{2}\NormalTok{],}\DataTypeTok{horiz =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{ylab=}\StringTok{"Atitle"}\NormalTok{, }\DataTypeTok{names.arg =}\NormalTok{ male[,}\DecValTok{1}\NormalTok{], }\DataTypeTok{main=}\StringTok{"Some title"}\NormalTok{, }\DataTypeTok{las=}\DecValTok{1}\NormalTok{,}\DataTypeTok{col=}\KeywordTok{c}\NormalTok{(}\StringTok{"blue2"}\NormalTok{,}\StringTok{"red2"}\NormalTok{) )}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Class5_files/figure-latex/unnamed-chunk-1-7.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{expression <-}\StringTok{ }\KeywordTok{read.delim}\NormalTok{(}\StringTok{"bggn213_05_rstats/up_down_expression.txt"}\NormalTok{)}
+\KeywordTok{palette}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{"blue"}\NormalTok{,}\StringTok{"grey"}\NormalTok{,}\StringTok{"red"}\NormalTok{))}
+\KeywordTok{plot}\NormalTok{(expression}\OperatorTok{$}\NormalTok{Condition1, expression}\OperatorTok{$}\NormalTok{Condition2, }\DataTypeTok{col=}\NormalTok{expression}\OperatorTok{$}\NormalTok{State)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Class5_files/figure-latex/unnamed-chunk-1-8.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{methyl <-}\StringTok{ }\KeywordTok{read.delim}\NormalTok{(}\StringTok{"bggn213_05_rstats/expression_methylation.txt"}\NormalTok{)}
+\NormalTok{map.colors <-}\StringTok{ }\KeywordTok{colorRampPalette}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{"grey"}\NormalTok{,}\StringTok{"red"}\NormalTok{))(}\DecValTok{100}\NormalTok{)}
+\NormalTok{map.colors}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   [1] "#BEBEBE" "#BEBCBC" "#BFBABA" "#BFB8B8" "#C0B6B6" "#C1B4B4" "#C1B2B2"
+##   [8] "#C2B0B0" "#C3AEAE" "#C3ACAC" "#C4AAAA" "#C5A8A8" "#C5A6A6" "#C6A5A5"
+##  [15] "#C7A3A3" "#C7A1A1" "#C89F9F" "#C99D9D" "#C99B9B" "#CA9999" "#CB9797"
+##  [22] "#CB9595" "#CC9393" "#CD9191" "#CD8F8F" "#CE8E8E" "#CF8C8C" "#CF8A8A"
+##  [29] "#D08888" "#D18686" "#D18484" "#D28282" "#D38080" "#D37E7E" "#D47C7C"
+##  [36] "#D47A7A" "#D57878" "#D67676" "#D67575" "#D77373" "#D87171" "#D86F6F"
+##  [43] "#D96D6D" "#DA6B6B" "#DA6969" "#DB6767" "#DC6565" "#DC6363" "#DD6161"
+##  [50] "#DE5F5F" "#DE5E5E" "#DF5C5C" "#E05A5A" "#E05858" "#E15656" "#E25454"
+##  [57] "#E25252" "#E35050" "#E44E4E" "#E44C4C" "#E54A4A" "#E64848" "#E64747"
+##  [64] "#E74545" "#E84343" "#E84141" "#E93F3F" "#E93D3D" "#EA3B3B" "#EB3939"
+##  [71] "#EB3737" "#EC3535" "#ED3333" "#ED3131" "#EE2F2F" "#EF2E2E" "#EF2C2C"
+##  [78] "#F02A2A" "#F12828" "#F12626" "#F22424" "#F32222" "#F32020" "#F41E1E"
+##  [85] "#F51C1C" "#F51A1A" "#F61818" "#F71717" "#F71515" "#F81313" "#F91111"
+##  [92] "#F90F0F" "#FA0D0D" "#FB0B0B" "#FB0909" "#FC0707" "#FD0505" "#FD0303"
+##  [99] "#FE0101" "#FF0000"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(methyl}\OperatorTok{$}\NormalTok{promoter.meth,methyl}\OperatorTok{$}\NormalTok{gene.meth, }\DataTypeTok{col=}\NormalTok{map.colors)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Class5_files/figure-latex/unnamed-chunk-1-9.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Section 3}
+\NormalTok{chrom <-}\StringTok{ }\KeywordTok{read.delim}\NormalTok{(}\StringTok{"bggn213_05_rstats/chromosome_position_data.txt"}\NormalTok{)}
+\KeywordTok{plot}\NormalTok{(chrom}\OperatorTok{$}\NormalTok{Position, chrom}\OperatorTok{$}\NormalTok{WT, }\DataTypeTok{type=}\StringTok{"l"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Class5_files/figure-latex/unnamed-chunk-1-10.pdf}
+
+
+\end{document}

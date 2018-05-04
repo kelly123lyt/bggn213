@@ -1,0 +1,288 @@
+---
+title: "Class8"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Yutian Li
+Class8
+
+
+#PartI k means 
+```{r}
+# Generate some example data for clustering
+tmp <- c(rnorm(30,-3), rnorm(30,3))
+# Generate some random normal distributed numbers and combine it with a copy itself reversed.
+x <- cbind(x=tmp, y=rev(tmp))
+plot(x)
+```
+
+```{r}
+km <- kmeans(x, centers =2, nstart=20)
+km
+```
+Inspect/print the results
+Q. How many points are in each cluster?
+30
+Q. What ‘component’ of your result object details
+ - cluster size? 30 and 30
+ - cluster assignment/membership? 
+ - cluster center? -2.94, 2.90
+Plot x colored by the kmeans cluster assignment and
+ add cluster centers as blue points
+```{r}
+km
+km$cluster
+km$size
+km$centers
+plot(x,col=km$cluster, pch=16)
+points(km$centers,col="blue", pch=15)
+```
+
+#Part2 hierarchical clustering
+First use a method to measure distance and create a function
+```{r}
+# First we need to calculate point (dis)similarity
+# as the Euclidean distance between observations
+dist_matrix <- dist(x)
+# The hclust() function returns a hierarchical
+# clustering model
+hc <- hclust(d = dist_matrix)
+# the print method is not so useful here
+hc
+```
+
+
+```{r}
+# Our input is a distance matrix from the dist()
+# function. Lets make sure we understand it first
+dist_matrix <- dist(x)
+class(dist_matrix)
+#This will say "dist". But we cannot view dist_matrix. Lets view as a matrix
+#View( as.matrix(dist_matrix) )
+#Lets convert the structure of the distance matrix to a real matrix
+dim(as.matrix(dist_matrix))
+#Then use hierarchical clustering
+hc <- hclust(d=dist_matrix)
+
+```
+Lets view the distance plotted into a dendrogram. You can see two general clusturs. If number closely looked at, they are grouped near closer cumbers
+```{r}
+plot(hc)
+```
+
+Dendrogram plotting
+```{r}
+plot(hc)
+abline(h=6, col="red")
+cutree(hc, h=6) # Cut by height h
+```
+
+```{r}
+plot(hc)
+cutree(hc, h=6) # Cut by height h
+```
+
+```{r}
+plot(hc)
+cutree(hc, k=2 ) # Cut into k grps
+```
+```{r}
+grps <- cutree(hc, h=5)
+table(grps)
+```
+
+Try different cutting
+```{r}
+plot(x,col=cutree(hc,k=4))
+```
+
+
+My practice example of hc
+
+```{r}
+# Step 1. Generate some example data for clustering
+x <- rbind(
+ matrix(rnorm(100, mean=0, sd = 0.3), ncol = 2), # c1
+ matrix(rnorm(100, mean = 1, sd = 0.3), ncol = 2), # c2
+ matrix(c(rnorm(50, mean = 1, sd = 0.3), # c3
+ rnorm(50, mean = 0, sd = 0.3)), ncol = 2))
+colnames(x) <- c("x", "y")
+# Step 2. Plot the data without clustering
+plot(x)
+# Step 3. Generate colors for known clusters
+# (just so we can compare to hclust results)
+col <- as.factor( rep(c("c1","c2","c3"), each=50) )
+plot(x, col=col)
+```
+Q. Use the dist(), hclust(), plot() and cutree()
+ functions to return 2 and 3 clusters
+ 
+```{r}
+#To start hierarchical clustering, we start with a distance matrix
+dist_matrix <- dist(x)
+#class(dist_matrix)
+#This will say "dist". But we cannot view dist_matrix. Lets view as a matrix
+#View( as.matrix(dist_matrix) )
+#Lets convert the structure of the distance matrix to a real matrix
+#dim(as.matrix(dist_matrix))
+#Then use hierarchical clustering
+hc <- hclust(d=dist_matrix)
+plot(hc)
+```
+
+Three cluster
+```{r}
+
+cutree(hc, k=3 ) # Cut into 3 grps
+plot(hc)
+plot(x,col=cutree(hc,k=3))
+
+```
+ 
+ 
+Two cluster 
+```{r}
+cutree(hc, k=2 ) # Cut into 3 grps
+plot(hc)
+plot(x,col=cutree(hc,k=2))
+```
+
+Q. How does this compare to your known 'col' groups?
+Not exactly the same but quite similar.
+
+
+#Part3 PCA
+First lets download our data
+```{r}
+mydata <- read.csv("https://tinyurl.com/expression-CSV",
+ row.names=1)
+head(mydata) 
+```
+
+Now lets do PCA
+
+```{r}
+#t is transposing my data
+View(t(mydata))
+#Then PCA
+pca <- prcomp(t(mydata), scale=TRUE) 
+#PCA$X contains teh principal components for drawing our first plot
+#See wats returned by prcomp function
+attributes(pca) 
+```
+Now lets plot our PCA data by accessing the "x" returned
+```{r}
+plot(pca$x[,1], pca$x[,2]) 
+```
+
+The total variation from PCA is:
+```{r}
+pca.var <- pca$sdev^2 
+#sdev is the standard deviation
+```
+
+```{r}
+## Precent variance is often more informative to look at
+pca.var <- pca$sdev^2
+pca.var.per <- round(pca.var/sum(pca.var)*100, 1) 
+pca.var.per
+#Numbers indicate percent difference each PCA is captureing. This looks like clif is at the PCA2. 
+```
+
+Now lets plot out the scree plot
+```{r}
+barplot(pca.var.per, main="Scree Plot",
+ xlab="Principal Component", ylab="Percent Variation")
+```
+```{r}
+## A vector of colors for wt and ko samples
+colvec <- as.factor( substr( colnames(mydata), 1, 2) )
+colvec
+#substr here extracts the first two letter. So it helps separate wt and ko.
+plot(pca$x[,1], pca$x[,2], col=colvec, pch=16,
+ xlab=paste0("PC1 (", pca.var.per[1], "%)"),
+ ylab=paste0("PC2 (", pca.var.per[2], "%)")) 
+#These labels allows us to see the PCA variance on the plot. paste0 concatenate vectors together, so it will say PC1 + 96.2 +%.
+
+text(pca$x[,1],pca$x[,2],labels=colnames(mydata), pos=1)
+#This labels every point with its name, pos1=below the dot
+
+#To play in console window
+#plot(pca$x[,1], pca$x[,2], col=colvec, pch=16)
+#identify(pca$x[,1], pca$x[,2], labels=colnames(mydata))
+#You can click on the plot then finish, it will tell you the closest point and what that point's name is. 
+```
+
+
+Now lets try a new example.
+```{r}
+#Lets access the data table first
+x <- read.csv("UK_foods.csv")
+dim(x)
+
+head(x)
+#This head demand returns my data table
+#If you look at it the first column is not doing anything, it's not our desired row names
+```
+
+```{r}
+# Lets change the row names to a matrix
+rownames(x) <- x[,1]
+#We are updating oue x matrix by selecting anything but the first lane by the -1
+x <- x[,-1]
+```
+
+```{r}
+knitr::kable(x, caption="The full UK foods data table")
+
+```
+
+```{r}
+#par(mar=c(20, 4, 4, 2))
+#Let's plot a heatmap
+heatmap(as.matrix(x))
+
+```
+
+```{r}
+#Lets start PCA
+pca <- prcomp( t(x) )
+summary(pca)
+#Looking at the summary, PC1 and PC2 are both important
+```
+
+```{r}
+plot(pca$x[,1], pca$x[,2], xlab="PC1", ylab="PC2", xlim=c(-270,500))
+text(pca$x[,1], pca$x[,2], colnames(x))
+```
+```{r}
+#Generate the variance matrix
+v <- round( pca$sdev^2/sum(pca$sdev^2) * 100 )
+v
+```
+```{r}
+#From v, we can plot the scree plot
+barplot(v, xlab="Principal Component", ylab="Percent Variation")
+
+```
+
+```{r}
+cumsum(v)
+
+```
+
+```{r}
+## Lets focus on PC1 as it accounts for > 90% of variance 
+par(mar=c(10, 4, 4, 2))
+barplot( pca$rotation[,1], las=2 )
+```
+
+```{r}
+biplot(pca)
+
+```
+
