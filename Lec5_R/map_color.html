@@ -138,6 +138,17 @@ $(document).ready(function () {
   index &lt;- round ((length(palette)-1)*proportion)+1
   return (palette[index])
 }</code></pre>
+<p>Now let;s try to understand this funtion</p>
+<pre class="r"><code>map.colors2 &lt;- function (x,high.low=range(x),palette=cm.colors(100)) {
+ 
+  #Determine where in the 'high.low' range our values of 'x' lie.
+   percent &lt;- ((x-high.low[1])/(high.low[2]-high.low[1]))
+   
+  #Where in the 'palette' vector of colors is this 'percent' 
+   index &lt;- round ((length(palette)-1)*percent)+1
+  
+   return (palette[index])
+}</code></pre>
 </div>
 </div>
 

@@ -227,6 +227,69 @@ x %in% y</code></pre>
 <pre><code>##      [,1]    [,2]   
 ## [1,] &quot;gene2&quot; &quot;gene2&quot;
 ## [2,] &quot;gene3&quot; &quot;gene3&quot;</code></pre>
+<pre class="r"><code>cbind(c(&quot;hello&quot;, &quot;help&quot;), c(&quot;please&quot;, &quot;me&quot;))</code></pre>
+<pre><code>##      [,1]    [,2]    
+## [1,] &quot;hello&quot; &quot;please&quot;
+## [2,] &quot;help&quot;  &quot;me&quot;</code></pre>
+<p>Notice that rbind binds them as rows</p>
+<pre class="r"><code>rbind(c(&quot;hello&quot;, &quot;help&quot;), c(&quot;please&quot;, &quot;me&quot;))</code></pre>
+<pre><code>##      [,1]     [,2]  
+## [1,] &quot;hello&quot;  &quot;help&quot;
+## [2,] &quot;please&quot; &quot;me&quot;</code></pre>
+<p>Lets make them into a function</p>
+<pre class="r"><code>intersectgenes &lt;- function(x,y) {
+  cbind(x[x %in% y], y[y %in% x])
+}
+
+intersectgenes(x,y)</code></pre>
+<pre><code>##      [,1]    [,2]   
+## [1,] &quot;gene2&quot; &quot;gene2&quot;
+## [2,] &quot;gene3&quot; &quot;gene3&quot;</code></pre>
+<p>Our x and y are in a data frame</p>
+<pre class="r"><code>#This is my code
+intersectgenes2 &lt;- function(df1,df2) {
+  cbind(df1[ df1$IDs %in% df2$IDs, ], df2[df2$IDs %in% df1$IDs, &quot;exp&quot;])
+}
+
+intersectgenes2(df1,df2)</code></pre>
+<pre><code>##     IDs exp df2[df2$IDs %in% df1$IDs, &quot;exp&quot;]
+## 2 gene2   1                               -2
+## 3 gene3   1                                1</code></pre>
+<pre class="r"><code>#This is professor's code
+gene_intersect2 &lt;- function(df1, df2) {
+ cbind( df1[ df1$IDs %in% df2$IDs, ],
+ df2[ df2$IDs %in% df1$IDs, &quot;exp&quot;] )
+}</code></pre>
+<p>But now the column name looks complex</p>
+<pre class="r"><code>intersectgenes3 &lt;- function(df1,df2) {
+  gene.colname=&quot;IDs&quot;
+  cbind( df1[ df1[,gene.colname] %in% df2[,gene.colname], ],
+ exp2=df2[ df2[,gene.colname] %in% df1[,gene.colname], &quot;exp&quot;] )
+}
+
+intersectgenes3(df1,df2)</code></pre>
+<pre><code>##     IDs exp exp2
+## 2 gene2   1   -2
+## 3 gene3   1    1</code></pre>
+<p>Change a bit about the words</p>
+<pre class="r"><code>intersectgenes4 &lt;- function(df1, df2, gene.colname=&quot;IDs&quot;) {
+ df1.name &lt;- df1[,gene.colname]
+ df2.name &lt;- df2[,gene.colname]
+ df1.inds &lt;- df1.name %in% df2.name
+ df2.inds &lt;- df2.name %in% df1.name
+ cbind( df1[ df1.inds, ],
+ exp2=df2[ df2.inds, &quot;exp&quot;] )
+}
+
+intersectgenes4(df1,df2)</code></pre>
+<pre><code>##     IDs exp exp2
+## 2 gene2   1   -2
+## 3 gene3   1    1</code></pre>
+<p>If we want to use every column Lets use merge function for this</p>
+<pre class="r"><code>merge(df1,df2,by=&quot;IDs&quot;)</code></pre>
+<pre><code>##     IDs exp.x exp.y
+## 1 gene2     1    -2
+## 2 gene3     1     1</code></pre>
 </div>
 </div>
 
