@@ -1,0 +1,269 @@
+---
+title: "lec9"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Lecture 9 Mini project
+
+##Section 1
+
+First lets import our data
+```{r}
+wisc.df <- read.csv("https://bioboot.github.io/bggn213_S18/class-material/WisconsinCancer.csv")
+head(wisc.df)
+```
+How many diagnosis are cancer vs non cancer
+```{r}
+table(wisc.df$diagnosis)
+```
+
+Now lets make a new data matrix with just the numeric values of interest in it. So we want to get rid of the first 3 columns. 
+```{r}
+wisc.data <- as.matrix(wisc.df[,3:32])
+row.names(wisc.data) <- wisc.df$id
+#This changes the row names of the matrix into the ID of each patient
+```
+
+```{r}
+# Create diagnosis vector by completing the missing code
+diagnosis <- as.numeric(wisc.df$diagnosis=='M')
+#If directly use wisc.df$diagnosis it will change the B and M into 2 and 1. We can first assign these to True and false.
+#"==" is checking if wisc.df$diagnosis is equal to 'M', so wisc.df$diagnosis=='M' returns a binary True false matrix, and using as.numeric will change true to 1 and false to 0.
+
+```
+
+Q1. How many observations are in this dataset?
+Q2. How many variables/features in the data are suffixed with _mean?
+Q3. How many of the observations have a malignant diagnosis?
+```{r}
+#Q1
+dim(wisc.data)
+length(wisc.data)
+nrow(wisc.data)
+# Use dim we know there are 569 rows and 30 columns. 
+#Using length we know there are 17070 total data. 
+# OR using nrow we know there are 569 rows
+
+#Q2
+colnames(wisc.data)
+grep("_mean",colnames(wisc.data),ignore.case = FALSE, value = FALSE,invert = FALSE)
+#The output has a factor of number from 1:10, so we know it is the first 10 columns that has "_mean" suffix.
+#ignore.case is case sensitivity in testing
+#value = TRUE will tell you which ones are actually matching. 
+#Invert=TRUE will tell you which ones you don't want/dont match.
+length(grep("_mean",colnames(wisc.data)))
+#This simply tells you number of true
+
+#Q3
+sum(diagnosis) 
+#This adds all the M, because M=1, B=0.
+#212 people are having a malignant diagnosis. 
+```
+
+##Section 2
+
+```{r}
+#evaluate mean and standard deviation of data
+colMeans(wisc.data)
+
+plot(colMeans(wisc.data),type="o")
+
+apply(wisc.data,2,sd)
+#apply(X, MARGIN, FUN, ...)
+#our x is the wisc.data, 2 stands for columns, sd is standard deviation function
+
+
+```
+
+
+Lets start PCA
+```{r}
+wisc.pr <- prcomp(wisc.data, scale=TRUE)
+summary(wisc.pr)
+
+```
+
+Q4. From your results, what proportion of the original variance is captured by the first principal components (PC1)?
+0.4427
+
+Q5. How many principal components (PCs) are required to describe at least 70% of the original variance in the data?
+PC1,PC2,PC3
+
+Q6. How many principal components (PCs) are required to describe at least 90% of the original variance in the data?
+UP to PC7.
+
+```{r}
+biplot(wisc.pr)
+```
+
+Q7. What stands out to you about this plot? Is it easy or difficult to understand? Why?
+They seem to deviate toward a same direction with groups of cancer patients. 
+
+```{r}
+#Lets plot PC1 with PC2
+plot(wisc.pr$x[,1],wisc.pr$x[,2], col=diagnosis+1 , xlab = "PC1", ylab = "PC2")
+```
+
+```{r}
+#Lets repeat for PC1 and PC3
+plot(wisc.pr$x[, c(1, 3)], col = (diagnosis + 1), 
+     xlab = "PC1", ylab = "PC3")
+```
+Q8. Repeat the same for principal components 1 and 3. What do you notice about these plots?
+
+Red ones are with cancer, black ones are no cancer and they are closely bundled together.
+
+Let's plot the scree plot
+```{r}
+#Lets calculate the variance
+pr.var <- wisc.pr$sdev^2
+
+# Variance explained by each principal component: pve
+pve <- pr.var/sum(pr.var)
+
+# Plot variance explained for each principal component
+plot(pve, xlab = "Principal Component", 
+     ylab = "Proportion of Variance Explained", 
+     ylim = c(0, 1), type = "o")
+```
+
+
+```{r}
+# Alternative scree plot of the same data, note data driven y-axis
+
+barplot(pve, ylab = "Precent of Variance Explained",
+     names.arg=paste0("PC",1:length(pve)), las=2, axes = FALSE)
+axis(2, at=pve, labels=round(pve,2)*100 )
+```
+
+
+```{r}
+# Plot cumulative proportion of variance explained
+plot(cumsum(pve), xlab = "Principal Component", 
+     ylab = "Cumulative Proportion of Variance Explained", 
+     ylim = c(0, 1), type = "o")
+```
+
+
+```{r}
+# Plot cumulative proportion of variance explained
+plot(pve, xlab = "Principal Component", 
+     ylab = "Cumulative Proportion of Variance Explained", 
+     ylim = c(0, 1), type = "o")
+```
+Q9. For the first principal component, what is the component of the loading vector (i.e. wisc.pr$rotation[,1]) for the feature  concave.points_mean?
+
+
+
+Q10. What is the minimum number of principal components required to explain 80% of the variance of the data?
+PC5
+
+
+##Section3 Clustering
+
+```{r}
+#Scale
+data.scaled <- scale(wisc.data)
+#Distance matrix
+data.dist <- dist(data.scaled)
+#h cluster
+wisc.hclust <- hclust(data.dist)
+#plot
+plot(wisc.hclust)
+abline(h=20, col="red")
+```
+Q11. Using the plot() function, what is the height at which the clustering model has 4 clusters?
+We used our eye balling to see that the height was 20.
+```{r}
+wisc.hclust.clusters <- cutree(wisc.hclust,k=4)
+```
+
+How do these matchh our diagnosis?
+
+```{r}
+table(diagnosis)
+table(wisc.hclust.clusters)
+table(wisc.hclust.clusters,diagnosis)
+#The first two are summarizing.
+#The last one is a cross tabulation. 165 malignant are cluster 1. 343 benigh are cluster 3. 
+# we can see a split of cluster 1 and cluster 3 capturing something different.
+```
+
+Q12. Can you find a better cluster vs diagnoses match with by cutting into a different number of clusters between 2 and 10?
+```{r}
+wisc.hclust.clusters <- cutree(wisc.hclust,k=4)
+table(wisc.hclust.clusters,diagnosis)
+
+```
+
+
+
+#Section 4 k means
+```{r}
+data.scaled<-scale(wisc.data)
+wisc.km <- kmeans(data.scaled, centers=2, nstart=20)
+#See how well our groups separated compare to diagosis
+table(wisc.km$cluster,diagnosis)
+table(wisc.hclust.clusters,diagnosis)
+
+```
+
+Q13. How well does k-means separate the two diagnoses? How does it compare to your hclust results?
+It separates pretty well. Even some errors, I think it's even better than the hclust method.
+
+#Section 5 Compare to PCA
+
+```{r}
+## Use the distance along the first 7 PCs for clustering i.e. wisc.pr$x[, 1:7]
+
+wisc.pr.hclust <- hclust(dist(wisc.pr$x[,1:7]),method="ward.D2")
+# we are already clustering the PCA results.
+plot(wisc.pr.hclust)
+wisc.pr.hclust.clusters <- cutree(wisc.pr.hclust, k=2)
+
+```
+```{r}
+plot(wisc.pr$x[,1:2], col=wisc.pr.hclust.clusters)
+```
+
+
+Q14. How well does the newly created model with four clusters separate out the two diagnoses?
+```{r}
+table(wisc.pr.hclust.clusters, diagnosis)
+```
+Q15. How well do the k-means and hierarchical clustering models you created in previous sections (i.e. before PCA) do in terms of separating the diagnoses? Again, use the table() function to compare the output of each model (wisc.km$cluster and  wisc.hclust.clusters) with the vector containing the actual diagnoses.
+k means are better than hclust.
+
+```{r}
+table(wisc.km$cluster,diagnosis)
+table(wisc.hclust.clusters,diagnosis)
+table(wisc.pr.hclust.clusters, diagnosis)
+
+```
+Q16. Which of your analysis procedures resulted in a clustering model with the best specificity? How about sensitivity?
+I think PCA is the best
+
+```{r}
+library("rgl")
+plot3d(wisc.pr$x[,1:3],col=diagnosis+1)
+```
+
+#BONUS SECTION
+
+```{r}
+url <- "https://tinyurl.com/new-samples-CSV"
+new <- read.csv(url)
+npc <- predict(wisc.pr, newdata=new)
+
+```
+
+```{r}
+plot(wisc.pr$x[,1:2], col=wisc.pr.hclust.clusters)
+points(npc[,1],npc[,2],col=c("purple","blue"),pch=16,cex=3)
+
+```
+
