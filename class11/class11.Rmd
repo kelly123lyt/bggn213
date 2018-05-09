@@ -28,5 +28,159 @@ percent
 
 Q2: Type HIV in the search box on the home page and determine how many HIV-1 protease
 structures are in the current PDB?
+118
 
+
+Q3: Water molecules normally have 3 atoms. Why do we see just one atom per water molecule
+in this structure?
+We only see oxygen atom. Hydrogen atoms are too small to be visualized.
+
+
+Q4: There is a conserved water molecule in the binding site. Can you identify this water
+molecule? What residue number does this water molecule have (see note below)?
+
+
+```{r}
+library(bio3d)
+```
+
+Read in out HIV protease
+
+```{r}
+pdb <- read.pdb("1hsg")
+pdb
+```
+
+Q6. How many amino acid residues are there in this pdb object and what are the two nonprotein
+residues?
+
+198 aa residue.
+Non-protein/nucleic resid values: [ HOH (127), MK1 (1) ]
+
+
+Q7. What type of R object is pdb$
+```{r}
+attributes(pdb)
+str(pdb$atom)
+```
+
+#ATOM selection in PDB
+
+```{r}
+inds.ligands <- atom.select(pdb,"ligand")
+inds.protein <- atom.select(pdb,"protein")
+
+```
+```{r}
+# Print a subset of $atom data for ligands
+pdb$atom[inds.ligands$atom,]
+```
+
+
+```{r}
+# Print a subset of $atom data for protein
+pdb$atom[inds.protein$atom,]
+
+```
+
+```{r}
+head(pdb$atom[inds.protein$atom,])
+```
+
+#select protein only atoms and write
+```{r}
+pdb.ligand<-trim.pdb(pdb,inds=inds.ligands)
+pdb.ligand
+write.pdb(pdb.ligand,file="1hsg_ligand.pdb")
+
+pdb.protein <-trim.pdb(pdb,inds=inds.protein)
+pdb.protein
+write.pdb(pdb.protein,file="1hsg_protein.pdb")
+```
+
+Q8. Use the Bio3D write.pdb() function to write out a new C-alpha atom only PDB file for
+viewing in VMD. 
+```{r}
+
+# Select C-alphas 
+ca.inds <- atom.select(pdb, "calpha")
+pdb.ca <-trim.pdb(pdb,inds=ca.inds)
+pdb.ca
+write.pdb(pdb.ca,file="1hsg_ca.pdb")
+
+```
+
+
+
+#muscle
+
+test muscle by aligning multiple pdb
+```{r}
+# Download some example PDB files
+ids <- c("1TND_B","1AGR_A","1TAG_A","1GG2_A","1KJY_A","4G5Q_A")
+files <- get.pdb(ids, split = TRUE)
+# Extract and align the chains we are interested in
+pdbs <- pdbaln(files, fit = TRUE)
+# Print to screen a summary of the 'pdbs' object
+pdbs
+```
+
+#BLAST SEARCH PDB
+
+
+```{r}
+aa <- get.seq("1ake_A")
+b <- blast.pdb(aa)
+
+```
+```{r}
+# Plot a summary of search results
+hits <- plot(b)
+```
+
+
+```{r}
+hits
+head(hits$pdb.id)
+```
+
+```{r}
+# Fetch PDBs
+files <- get.pdb(hits$pdb.id, path = "pdbs", split = TRUE, gzip =
+TRUE)
+# Align structures
+pdbs <- pdbaln(files)
+# Vector containing PDB codes
+ids <- basename.pdb(pdbs$id)
+# Draw schematic alignment
+plot(pdbs, labels=ids)
+```
+
+
+sequence conservation analysis
+```{r}
+# Calculate sequence conservation
+cons <- conserv(pdbs, method="entropy22")
+# SSE annotations
+sse <- pdbs2sse(pdbs, ind=1, rm.gaps=FALSE)
+# Plot conservation per residue
+plotb3(cons, sse=sse, ylab="Sequence entropy")
+```
+
+
+principal component analysis
+```{r}
+# find invariant core
+core <- core.find(pdbs)
+# superimpose all structures to core
+pdbs$xyz = pdbfit(pdbs, core)
+# Perform PCA
+pc.xray <- pca(pdbs)
+# Calculate RMSD
+rd <- rmsd(pdbs)
+# Structure-based clustering
+hc.rd <- hclust(dist(rd))
+grps.rd <- cutree(hc.rd, k=3)
+plot(pc.xray, 1:2, col="grey50", bg=grps.rd, pch=21, cex=1)
+```
 
