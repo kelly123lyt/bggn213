@@ -1,0 +1,29 @@
+---
+title: "lecture12"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Lecture 12
+
+```{r}
+library(bio3d)
+
+```
+
+Set up HIV for docking study
+
+Get the protein first
+```{r}
+file.name <- get.pdb("1hsg")
+hiv <- read.pdb(file.name)
+protein <- trim.pdb(hiv, "protein")
+ligand <- trim.pdb(hiv, "ligand")
+write.pdb(protein, file="1hsg_protein.pdb")
+write.pdb(ligand, "1hsg_ligand.pdb")
+```
+
+
