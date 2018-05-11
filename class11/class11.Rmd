@@ -184,3 +184,11 @@ grps.rd <- cutree(hc.rd, k=3)
 plot(pc.xray, 1:2, col="grey50", bg=grps.rd, pch=21, cex=1)
 ```
 
+```{r}
+plot(pc.xray)
+```
+
+```{r}
+mktrj(pc.xray, pc=1, file="pc_1.pdb")
+```
+
