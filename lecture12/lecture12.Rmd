@@ -26,4 +26,18 @@ write.pdb(protein, file="1hsg_protein.pdb")
 write.pdb(ligand, "1hsg_ligand.pdb")
 ```
 
+process docking results for viewing in VMD
+
+```{r}
+library(bio3d)
+res <- read.pdb("all.pdbqt", multi=TRUE)
+write.pdb(res, "results.pdb")
+```
+
+
+```{r}
+res <- read.pdb("all.pdbqt", multi=TRUE)
+ori <- read.pdb("ligand.pdbqt")
+rmsd(ori, res)
+```
 
