@@ -43,3 +43,13 @@ ori <- read.pdb("ligand.pdbqt")
 rmsd(ori, res)
 ```
 
+%Q6:
+Q6: How would you determine the RMSD for heavy atoms only (i.e. non hydrogen atoms)?
+HINT: The atom.select() function will be of help here along with the selection string “noh” for no
+hydrogens.
+```{r}
+inds <- atom.select(ori,"noh")
+
+rmsd(ori$xyz[,inds$xyz], res$xyz[,inds$xyz])
+```
+
