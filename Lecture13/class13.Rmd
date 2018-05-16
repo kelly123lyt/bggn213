@@ -46,9 +46,17 @@ summary(populationgeno$exp[populationgeno$geno =="G/G"])
 
 
 ```
-
+boxplot
 ```{r}
-boxplot(populationgeno$exp~populationgeno$geno)
+boxplot(exp~geno, data=populationgeno,notch=TRUE)
 
+```
+plot with ggplot2
+```{r}
+library(ggplot2)
+
+ggplot(populationgeno, aes(geno,exp))+geom_boxplot()
+
+#we can change geom based on the plot we want
 ```
 

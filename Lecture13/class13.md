@@ -83,7 +83,7 @@ summary(populationgeno$exp[populationgeno$geno =="G/G"])
 
 
 ```r
-boxplot(populationgeno$exp~populationgeno$geno)
+boxplot(exp~geno, data=populationgeno)
 ```
 
 ![](class13_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
