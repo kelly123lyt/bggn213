@@ -80,11 +80,24 @@ summary(populationgeno$exp[populationgeno$geno =="G/G"])
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 ##   6.675  16.903  20.074  20.594  24.457  33.956
 ```
-
+boxplot
 
 ```r
-boxplot(exp~geno, data=populationgeno)
+boxplot(exp~geno, data=populationgeno,notch=TRUE)
 ```
 
 ![](class13_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
+plot with ggplot2
+
+```r
+library(ggplot2)
+
+ggplot(populationgeno, aes(geno,exp))+geom_boxplot()
+```
+
+![](class13_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
+
+```r
+#we can change geom based on the plot we want
+```
 
