@@ -1,0 +1,54 @@
+---
+title: "class13"
+output: 
+  html_document: 
+    keep_md: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+#Load genome project data
+```{r}
+genotype <- read.csv("373531-SampleGenotypes-Homo_sapiens_Variation_Sample_rs8067378.csv")
+```
+
+```{r}
+table(genotype[,2])/nrow(genotype)
+#G/G is 14% so 14% are homozygous
+
+```
+
+Base quality scores from fastqsanger
+Q8: Does the first sequence have good quality? 
+```{r}
+library(seqinr)
+library(gtools)
+phred <- asc( s2c("DDDDCDEDCDDDDBBDDDCC@") ) - 33
+phred 
+```
+
+#Populational scale analysis
+
+
+```{r}
+populationgeno <- read.table("rs8067378_ENSG00000172057.6.txt")
+
+```
+
+
+```{r}
+summary(populationgeno$exp[populationgeno$geno =="A/A"])
+summary(populationgeno$exp[populationgeno$geno =="A/G"])
+summary(populationgeno$exp[populationgeno$geno =="G/G"])
+
+
+```
+
+```{r}
+boxplot(populationgeno$exp~populationgeno$geno)
+
+```
+
