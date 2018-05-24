@@ -1,0 +1,291 @@
+---
+title: "Lecture15"
+output: 
+  html_document: 
+    keep_md: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+Load data
+```{r,echo=FALSE}
+library(DESeq2)
+```
+
+```{r}
+metaFile <- "GSE37704_metadata.csv"
+countFile <- "GSE37704_featurecounts.csv"
+colData <- read.csv(metaFile, row.names=1)
+head(colData)
+countData <- read.csv(countFile, row.names=1)
+head(countData)
+```
+
+```{r}
+# Note we need to remove the odd first $length col
+countData <- as.matrix(countData[,-1])
+head(countData)
+```
+
+```{r}
+# Filter count data where you have 0 read count across all samples.
+countData = countData[rowSums(countData)>1, ]
+head(countData)
+```
+
+Nice now lets setup the DESeqDataSet object required for the DESeq() function and then run the DESeq pipeline. This is again similar to our last days hands-on session.
+
+
+```{r}
+dds <- DESeqDataSetFromMatrix(countData=countData,
+                             colData=colData,
+                             design=~condition)
+dds <-DESeq(dds)
+```
+#Extracting our results table
+
+```{r}
+res <- results(dds)
+res
+```
+The returned res object is not a standard R data.frame but one that carries extra meatadata on the meaning of the columns:
+
+
+```{r}
+mcols(res, use.names = TRUE)
+
+```
+
+```{r}
+summary(res)
+
+```
+Too many genes
+```{r}
+resSig <- results(dds,lfcThreshold = 2,alpha=0.05)
+summary(resSig)
+```
+
+
+
+Note that there are many many genes with differential expression reported above. Let’s therefore be more strict about which set of genes are considered ‘significant’. There are two main ways we can do this:
+
+Lower the false discovery rate threshold (i.e. the threshold on the adjusted p-value (padj) in the results table)
+Raise the log2 fold change threshold from 0 to a higher value.
+
+Q. In the summary of our results printed above (and by default) the FDR level is set to 10% (i.e. adjusted p-value < 0.1) and the log2 fold change threshold is set to 0. Use the alpha and lfcThreshold input arguments to the results() function to change these to an FDR of 5% and a log2 fold change threshold of 2. Then use the summary() function to find out how many genes are up and down at these thresholds.
+
+```{r}
+#0.1 is the default p value, lets lower
+table(resSig$padj < 0.05)
+
+```
+
+change log2 fold change
+```{r}
+table(resSig$log2FoldChange >2)
+
+```
+combine
+```{r}
+table( resSig$padj < 0.05, resSig$log2FoldChange > 2)
+
+```
+We can now subset the results table to extract the genes with adjusted p value less than 0.05 and then sort them by their log2 fold change estimate to get the significant genes with the strongest down-regulation:
+
+
+```{r}
+# Make a new results object 'resSig' with only significant genes
+resSig <- subset(res, padj < 0.05)
+
+# Print the first 10 strongest DOWN genes
+ord.down <- order(resSig$log2FoldChange)
+head(resSig[ ord.down, ], 10)
+```
+Q. Do the same as above but print out the top 10 strongest up-regulated genes. HINT: see the help for the order() function to see how to return the decreasing ordered indices you will want for accesing your resSig result.
+```{r}
+# Print the first 10 strongest UP genes
+ord.up <- order(resSig$log2FoldChange, decreasing = TRUE)
+head(resSig[ ord.up, ], 10)
+```
+
+#Annotating our genes and mapping to Entrez IDs
+
+```{r}
+library("AnnotationDbi")
+library("org.Hs.eg.db")
+
+columns(org.Hs.eg.db)
+```
+
+Annotate this result table withh MAPIDS
+```{r}
+resSig$symbol = mapIds(org.Hs.eg.db,
+                    keys=row.names(res), 
+                    column="SYMBOL",
+                    keytype="ENSEMBL",
+                    multiVals="first")
+
+resSig$entrez = mapIds(org.Hs.eg.db,
+                    keys=row.names(res), 
+                    column="ENTREZID",
+                    keytype="ENSEMBL",
+                    multiVals="first")
+
+resSig$name =   mapIds(org.Hs.eg.db,
+                    keys=row.names(res), 
+                    column="GENENAME",
+                    keytype="ENSEMBL",
+                    multiVals="first")
+
+head(resSig, 10)
+```
+
+#Section 2. Pathway Analysis
+
+#Download the packages
+```{r}
+source("http://bioconductor.org/biocLite.R")
+biocLite( c("pathview", "gage", "gageData") )
+
+```
+
+Use these packages
+```{r}
+library(pathview)
+library(gage)
+library(gageData)
+```
+
+```{r}
+data(kegg.sets.hs)
+data(sigmet.idx.hs)
+
+kegg.sets.hs = kegg.sets.hs[sigmet.idx.hs]
+head(kegg.sets.hs, 3)
+```
+
+```{r}
+foldchanges <- resSig$log2FoldChange
+names(foldchanges) <- resSig$entrez
+head(foldchanges)
+```
+
+```{r}
+# Get the results
+keggres <- gage(foldchanges, gsets=kegg.sets.hs, same.dir=TRUE)
+```
+
+```{r}
+attributes(keggres)
+
+```
+```{r}
+head(keggres$greater)
+
+```
+
+```{r}
+head(keggres$less)
+
+```
+
+```{r}
+lapply(keggres, head)
+
+```
+
+```{r}
+
+## Sanity check displaying all pathways data
+pathways = data.frame(id=rownames(keggres$greater), keggres$greater)
+head(pathways)
+```
+
+```{r}
+pathview(gene.data=foldchanges, pathway.id="hsa04110")
+
+```
+![](hsa04110.pathview.png)
+
+```{r}
+# A different PDF based output of the same data
+pathview(gene.data=foldchanges, pathway.id="hsa04110", kegg.native=FALSE)
+```
+
+```{r}
+## Focus on top 5 upregulated pathways here for demo purposes only
+keggrespathways <- rownames(keggres$greater)[1:5]
+
+# Extract the IDs part of each string
+keggresids = substr(keggrespathways, start=1, stop=8)
+keggresids
+```
+
+
+```{r}
+pathview(gene.data=foldchanges, pathway.id=keggresids, species="hsa")
+
+```
+
+#Section 3. Gene Ontology (GO)
+
+```{r}
+data(go.sets.hs)
+data(go.subs.hs)
+gobpsets = go.sets.hs[go.subs.hs$BP]
+
+gobpres = gage(foldchanges, gsets=gobpsets, same.dir=TRUE)
+
+lapply(gobpres, head)
+```
+
+
+#Section 4. Reactome Pathway Analysis
+
+```{r}
+sig_genes <- res[res$padj <= 0.05 & !is.na(res$padj), "symbol"]
+print(paste("Total number of significant genes:", length(sig_genes)))
+```
+
+```{r}
+write.table(sig_genes, file="significant_genes.txt", row.names=FALSE, col.names=FALSE, quote=FALSE)
+
+```
+
+Question: What pathway has the most significant “Entities p-value”? Do the most significant pathways listed match your previous KEGG results? What factors could cause differences between the two methods?
+
+Endosomal/Vacuolar pathway
+
+
+#Section 5: GO
+Question: What pathway has the most significant “Entities p-value”? Do the most significant pathways listed match your previous KEGG results? What factors could cause differences between the two methods?
+
+
+#Bounus: Gene clustering, heatmaps and PCA
+
+```{r}
+vsd <- vst(dds, blind = FALSE)
+
+```
+
+```{r}
+library("genefilter")
+
+#row.variance <- apply(assay(vsd), 1, var)
+row.variance <- rowVars(assay(vsd))
+ord.variance <- order( row.variance, decreasing = TRUE) 
+
+# Focus on top 20 most variable genes for demo purposes
+mat  <- assay(vsd)[ ord.variance[1:20], ]
+```
+
+```{r}
+library(pheatmap)
+mat.center  <- mat - rowMeans(mat)
+pheatmap(mat.center)
+```
+

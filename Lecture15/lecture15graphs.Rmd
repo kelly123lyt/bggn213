@@ -1,0 +1,19 @@
+---
+title: "lecture15graphs"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+![](hsa04110.pathview.png)
+
+![](hsa04640.pathview.png)
+
+![](hsa04630.pathview.png)
+
+![](hsa04142.pathview.png)
+
+![](hsa00140.pathview.png)
+
+![](hsa04740.pathview.png)
