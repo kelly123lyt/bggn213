@@ -1,0 +1,52 @@
+---
+title: "Lecture16"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+download.file("https://bioboot.github.io/bggn213_S18/class-material/mouse.1.rna.fna.gz.x.cow.faa.crbl.csv.gz", "shmlast.csv")
+```
+
+```{r}
+shmlast_out <- read.csv("shmlast.csv")
+> head(shmlast_out)
+```
+
+```{r}
+ dim(shmlast_out)
+```
+
+```{r}
+hist(shmlast_out$E_scaled)
+ 
+
+```
+
+```{r}
+hist(shmlast_out$bitscore) 
+
+```
+
+```{r}
+hist(shmlast_out$q_len)
+
+```
+
+```{r}
+plot(shmlast_out$q_len, shmlast_out$bitscore)
+
+```
+
+```{r}
+shmlast_sub = shmlast_out[sample(nrow(shmlast_out), 10),]
+View(shmlast_sub)
+tmp <- subset(shmlast_out, q_len >= 8000 & q_len <= 11000 & bitscore <=2000)    
+functions <- tmp[, c("q_name", "s_name")]
+
+```
+
